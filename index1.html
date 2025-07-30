@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Genetics Playground</title>
+    <style>
+        :root {
+            --primary: #6f2b8d;
+            --secondary: #a162d6;
+            --bg: #f9f6fc;
+            --card: #fff;
+            --text: #2e2e2e;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            width: 100%;
+            max-width: 700px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+        }
+
+        header button,
+        nav button,
+        .controls button {
+            padding: 0.5rem 1rem;
+            font-size: 0.95rem;
+            border: none;
+            border-radius: 8px;
+            background: var(--primary);
+            color: var(--card);
+            cursor: pointer;
+            box-shadow: var(--shadow);
+        }
+
+        nav {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        nav button {
+            background: var(--card);
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        nav button.active {
+            background: var(--primary);
+            color: var(--card);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+            padding: 1rem;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .controls label {
+            grid-column: span 2;
+            font-weight: bold;
+        }
+
+        .controls select {
+            padding: 0.5rem;
+            font-size: 1rem;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+        }
+
+        .feedback {
+            grid-column: span 2;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 1rem;
+            color: var(--secondary);
+        }
+
+        .skin-tone-box {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto;
+            border: 2px solid #333;
+        }
+
+        :root {
+            --primary: #6f2b8d;
+            --secondary: #a162d6;
+            --bg: #f9f6fc;
+            --card: #ffffff;
+            --text: #2e2e2e;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+            --duration: 0.3s;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: background var(--duration), color var(--duration);
+        }
+
+        body.dark {
+            background: #1a1a1a;
+            color: #f0f0f0;
+        }
+
+        header {
+            width: 100%;
+            max-width: 700px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1rem auto;
+            padding: 0 1rem;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+        }
+
+        header button,
+        nav button,
+        .controls button {
+            padding: 0.5rem 1rem;
+            font-size: 0.95rem;
+            border: none;
+            border-radius: 8px;
+            background: var(--primary);
+            color: var(--card);
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: transform var(--duration), background var(--duration);
+        }
+
+        header button:hover,
+        nav button:hover,
+        .controls button:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        nav {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        nav button {
+            background: var(--card);
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        nav button.active {
+            background: var(--primary);
+            color: var(--card);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+            padding: 0 1rem;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .pedigree,
+        .square,
+        .offspring {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 40px;
+            margin: 24px 0;
+        }
+
+        .individual {
+            text-align: center;
+        }
+
+        .circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border: 3px solid var(--primary);
+            margin-bottom: 8px;
+            transition: all var(--duration);
+        }
+
+        .circle.reveal {
+            animation: pop 0.4s ease-in-out;
+        }
+
+        @keyframes pop {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .pp {
+            background: var(--card);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .p_dominant {
+            background: var(--primary);
+            color: var(--card);
+        }
+
+        .unknown {
+            background: #ddd;
+            color: #666;
+            border-style: dashed;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 1rem;
+        }
+
+        .controls label {
+            grid-column: span 2;
+            font-weight: 600;
+        }
+
+        .controls select,
+        .controls input {
+            padding: 10px;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .feedback {
+            grid-column: span 2;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--secondary);
+            min-height: 1.5em;
+        }
+
+        .line {
+            width: 100%;
+            height: 2px;
+            background: var(--primary);
+            margin: 1rem 0;
+        }
+
+        ul#csResultsList {
+            padding-left: 20px;
+        }
+
+        .styled-header {
+            background-color: #eef;
+            padding: 0.5rem 1rem;
+            border: 1px solid #ccc;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .styled-input {
+            width: 3rem;
+            height: 2.2rem;
+            text-align: center;
+            font-size: 1.1rem;
+            border: 2px solid #ccc;
+            border-radius: 6px;
+            transition: border-color 0.3s ease;
+        }
+
+        .styled-input:focus {
+            border-color: #3399ff;
+            outline: none;
+        }
+
+        .ps-input.correct {
+            border-color: green;
+            background-color: #e0ffe0;
+        }
+
+        .ps-input.incorrect {
+            border-color: red;
+            background-color: #ffe0e0;
+        }
+
+        #punnettSection button {
+            background-color: #6a2fb3;
+            /* Purple */
+            color: white;
+            border: none;
+            padding: 0.8rem 1rem;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            /* Full width */
+            max-width: 300px;
+            /* Optional max width */
+            transition: background-color 0.3s ease;
+        }
+
+        #punnettSection button:hover {
+            background-color: #572a92;
+            /* Slightly darker purple on hover */
+        }
+
+        /* Add this to your CSS */
+
+        body.dark {
+            background-color: #121212;
+            /* or any dark background you prefer */
+            color: white;
+        }
+
+        body.dark .ps-header,
+        body.dark .ps-input,
+        body.dark #punnettFeedback,
+        body.dark button {
+            color: white;
+            /* text color */
+        }
+
+        body.dark .ps-input {
+            background-color: #1e1e1e;
+            /* darker input bg */
+            border: 1px solid #555;
+        }
+
+        body.dark .pedigree {
+            color: rgb(0, 0, 0);
+        }
+
+        body.dark nav button {
+            color: rgb(0, 0, 0);
+        }
+
+        /* Force Punnett table styles to stay light in dark mode */
+        .punnett-fixed,
+        .punnett-fixed th,
+        .punnett-fixed td,
+        .punnett-fixed input {
+            background-color: white !important;
+            color: black !important;
+            border: 1px solid #ccc;
+        }
+
+        /* Optional: keep the input fields visually clean */
+        .punnett-fixed input {
+            padding: 0.4em;
+            border-radius: 4px;
+            font-weight: bold;
+            text-align: center;
+            width: 40px;
+        }
+    </style>
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid row text-center sticky-top shadow-sm "
+        style="height: 50px; background-color: rgba(34, 34, 34, 0.9);">
+        <div class="col d-flex align-items-center justify-content-center" style=" font-size: 30px;"> <a class="nav-link"
+                href="index.html">Home</a> </div>
+        <div class="col d-flex align-items-center justify-content-center" style="font-size: 30px;"> <a class="nav-link"
+                href="index1.html">page 2 </a> </div>
+        <div class="col d-flex align-items-center justify-content-center" style="font-size: 30px;">
+            <a class="nav-link" href="index2.html">page 3</a>
+        </div>
+    </div>
+    <header>
+        <h1>Genetics Playground</h1>
+        <button onclick="toggleDarkMode()">Toggle Dark</button>
+    </header>
+
+    <nav>
+        <button class="active" onclick="switchGame('mendelian', event)">Mendelian Puzzle</button>
+        <button onclick="setupPunnettGame(); switchGame('punnett', event)">Punnett Square</button>
+        <button onclick="switchGame('skinColor', event)">Skin Color Game</button>
+    </nav>
+
+    <div class="container section active" id="mendelianSection">
+        <header>
+            <h1>Mendelian Puzzle</h1>
+            <div>
+                <button onclick="setupPuzzle()">New Puzzle</button>
+            </div>
+        </header>
+
+        <div class="container">
+            <div class="pedigree">
+                <div class="row">
+                    <div class="individual">
+                        <div class="circle unknown" id="parentA">?</div>
+                        <div id="parentALabel">Parent A<br>(given)</div>
+                    </div>
+                    <div class="individual">
+                        <div class="circle unknown" id="parentB">?</div>
+                        <div id="parentBLabel">Parent B<br>(guess)</div>
+                    </div>
+                </div>
+
+                <div class="line"></div>
+
+                <div class="row">
+                    <div class="individual">
+                        <div class="circle unknown" id="child1">?</div>
+                        <div id="label1">Child 1<br>(guess)</div>
+                    </div>
+                    <div class="individual">
+                        <div class="circle unknown" id="child2">?</div>
+                        <div id="label2">Child 2<br>(given)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <label for="guessParentB">Guess Parent B genotype:</label>
+                <select id="guessParentB">
+                    <option>PP</option>
+                    <option>Pp</option>
+                    <option>pp</option>
+                </select>
+
+                <label for="guessChild1">Guess Child 1 genotype:</label>
+                <select id="guessChild1">
+                    <option>PP</option>
+                    <option>Pp</option>
+                    <option>pp</option>
+                </select>
+
+                <button onclick="checkAnswer()" style="grid-column: span 2;">Check Answer</button>
+                <div class="feedback" id="feedback"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container section" id="punnettSection">
+        <h2 style="text-align: center; font-size: 1.8rem; margin-bottom: 1rem;">🧬 Fill the Punnett Square</h2>
+
+        <div class="offspring" style="display: flex; flex-direction: column; align-items: center;">
+            <button onclick="setupPunnettGame()"
+                style="margin-bottom: 1rem; padding: 0.6rem 1.2rem; font-size: 1rem;">🔄
+                New Puzzle</button>
+
+            <table class="punnett-fixed"
+                style="border-collapse: collapse; text-align: center; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th id="punnettTop1" class="ps-header styled-header"></th>
+                        <th id="punnettTop2" class="ps-header styled-header"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th id="punnettLeft1" class="ps-header styled-header"></th>
+                        <td><input type="text" class="ps-input styled-input" id="cell-0-0" maxlength="2"></td>
+                        <td><input type="text" class="ps-input styled-input" id="cell-0-1" maxlength="2"></td>
+                    </tr>
+                    <tr>
+                        <th id="punnettLeft2" class="ps-header styled-header"></th>
+                        <td><input type="text" class="ps-input styled-input" id="cell-1-0" maxlength="2"></td>
+                        <td><input type="text" class="ps-input styled-input" id="cell-1-1" maxlength="2"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <button id="checkAnswerBtn" onclick="checkPunnettAnswer()"
+                style="margin-top: 1.5rem; padding: 0.6rem 1.2rem; font-size: 1rem;">✅
+                Check Answer</button>
+            <p id="punnettFeedback" class="feedback" style="margin-top: 1rem; font-size: 1.1rem;"></p>
+        </div>
+    </div>
+
+
+    <div class="container section" id="skinColorSection">
+        <h2>🎨 Skin Color Inheritance</h2>
+        <p>Each parent has two genes: A/a and B/b.<br>
+            Dominant alleles (A, B) add to a darker skin score. More dominant = darker skin.</p>
+
+        <div class="controls">
+            <label for="skinParentA">Parent A Genotype:</label>
+            <select id="skinParentA">
+                <option>AABB</option>
+                <option>AaBB</option>
+                <option>AaBb</option>
+                <option>AAbb</option>
+                <option>Aabb</option>
+                <option>aabb</option>
+            </select>
+
+            <label for="skinParentB">Parent B Genotype:</label>
+            <select id="skinParentB">
+                <option>AABB</option>
+                <option>AaBB</option>
+                <option>AaBb</option>
+                <option>AAbb</option>
+                <option>Aabb</option>
+                <option>aabb</option>
+            </select>
+
+            <button onclick="calculateSkinColor()" style="grid-column: span 2;">Predict Offspring Skin Tone</button>
+            <div class="feedback" id="skinColorResult"></div>
+        </div>
+
+        <div id="skinColorVisual" style="text-align:center; margin-top:1rem;">
+            <div class="skin-tone-box" id="toneBox"></div>
+        </div>
+    </div>
+
+    <script>
+        let punnettTop = [];
+        let punnettLeft = [];
+        let correctPunnett = [];
+
+        function setupPunnettGame() {
+            const alleles = ['P', 'p'];
+
+            // Random alleles for top and left parents
+            punnettTop = [alleles[Math.floor(Math.random() * 2)], alleles[Math.floor(Math.random() * 2)]];
+            punnettLeft = [alleles[Math.floor(Math.random() * 2)], alleles[Math.floor(Math.random() * 2)]];
+
+            // Update headers
+            document.getElementById('punnettTop1').textContent = punnettTop[0];
+            document.getElementById('punnettTop2').textContent = punnettTop[1];
+            document.getElementById('punnettLeft1').textContent = punnettLeft[0];
+            document.getElementById('punnettLeft2').textContent = punnettLeft[1];
+
+            // Compute correct answers
+            correctPunnett = [
+                [combine(punnettLeft[0], punnettTop[0]), combine(punnettLeft[0], punnettTop[1])],
+                [combine(punnettLeft[1], punnettTop[0]), combine(punnettLeft[1], punnettTop[1])]
+            ];
+
+            // Clear inputs
+            for (let r = 0; r < 2; r++) {
+                for (let c = 0; c < 2; c++) {
+                    document.getElementById(`cell-${r}-${c}`).value = '';
+                }
+            }
+
+            document.getElementById('punnettFeedback').textContent = '';
+        }
+
+        function combine(a, b) {
+            return [a, b].sort().join('');
+        }
+
+
+        function checkPunnettAnswer() {
+            let allCorrect = true;
+
+            for (let r = 0; r < 2; r++) {
+                for (let c = 0; c < 2; c++) {
+                    const input = document.getElementById(`cell-${r}-${c}`).value.trim();
+                    const sortedInput = input.split('').sort().join('');
+                    const correct = correctPunnett[r][c];
+
+                    console.log(`Expected: ${correct}, Given: ${sortedInput}`);
+
+                    if (sortedInput !== correct) {
+                        allCorrect = false;
+                    }
+                }
+            }
+
+            const feedback = document.getElementById('punnettFeedback');
+            feedback.textContent = allCorrect
+                ? '✅ Correct! Well done.'
+                : '❌ Some answers are incorrect. Try again!';
+            feedback.style.color = allCorrect ? 'green' : 'red';
+        }
+
+
+
+        Array.prototype.random = function () {
+            return this[Math.floor(Math.random() * this.length)];
+        };
+
+        const circleClasses = {
+            PP: 'p_dominant',
+            Pp: 'p_dominant',
+            pp: 'pp',
+        };
+
+        const genotypes = ['PP', 'Pp', 'pp'];
+        let actual = {};
+
+        function generateOffspring(p1, p2) {
+            const results = [];
+            for (let i = 0; i < p1.length; i++) {
+                for (let j = 0; j < p2.length; j++) {
+                    results.push([p1[i], p2[j]].sort().join(''));
+                }
+            }
+            return [...new Set(results)];
+        }
+
+        function setupPuzzle() {
+            let kids;
+            do {
+                actual.parentA = genotypes.random();
+                actual.parentB = genotypes.random();
+                kids = generateOffspring(actual.parentA, actual.parentB);
+            } while (kids.length === 0);
+
+            actual.child2 = kids.random();
+            actual.child1 = kids.filter(k => k !== actual.child2).random() || actual.child2;
+
+            revealCircle('parentA', actual.parentA);
+            revealCircle('child2', actual.child2);
+            document.getElementById('parentALabel').innerHTML = `Parent A<br>(${actual.parentA})`;
+            document.getElementById('label2').innerHTML = `Child 2<br>(${actual.child2})`;
+
+            // Hide guesses
+            ['parentB', 'child1'].forEach(id => {
+                const el = document.getElementById(id);
+                el.className = 'circle unknown';
+                el.innerText = '?';
+            });
+
+            document.getElementById('parentBLabel').innerHTML = `Parent B<br>(guess)`;
+            document.getElementById('label1').innerHTML = `Child 1<br>(guess)`;
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('guessParentB').value = 'PP';
+            document.getElementById('guessChild1').value = 'PP';
+        }
+
+        function revealCircle(id, genotype) {
+            const el = document.getElementById(id);
+            el.className = 'circle ' + circleClasses[genotype] + ' reveal';
+            el.innerText = genotype;
+            setTimeout(() => el.classList.remove('reveal'), 400);
+        }
+
+        function checkAnswer() {
+            const guessB = document.getElementById('guessParentB').value;
+            const guessC1 = document.getElementById('guessChild1').value;
+            const feedback = document.getElementById('feedback');
+
+            // Generate all valid children for guessed Parent B and actual Parent A
+            const possibleChildren = generateOffspring(actual.parentA, guessB);
+
+            const isChild1Valid = possibleChildren.includes(guessC1);
+            const isChild2Valid = possibleChildren.includes(actual.child2);
+
+            if (isChild1Valid && isChild2Valid) {
+                revealCircle('parentB', guessB);
+                revealCircle('child1', guessC1);
+                document.getElementById('parentBLabel').innerHTML = `Parent B<br>(${guessB})`;
+                document.getElementById('label1').innerHTML = `Child 1<br>(${guessC1})`;
+                feedback.style.color = 'green';
+                feedback.textContent = '✅ Correct! These genotypes could result in both children.';
+            } else {
+                feedback.style.color = 'red';
+                feedback.textContent = '❌ Incorrect. These parents could not have produced both children.';
+            }
+        }
+
+
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark');
+        }
+
+        setupPuzzle();
+
+        function switchGame(game, evt) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(game + 'Section').classList.add('active');
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+            evt.target.classList.add('active');
+        }
+
+        function countDominantAlleles(geno) {
+            let count = 0;
+            if (geno[0] === 'A') count++;
+            if (geno[1] === 'A') count++;
+            if (geno[2] === 'B') count++;
+            if (geno[3] === 'B') count++;
+            return count;
+        }
+
+        function getAlleles(genePair) {
+            return [genePair[0], genePair[1]];
+        }
+
+        function crossGenes(g1, g2) {
+            const results = [];
+            for (let a of g1) {
+                for (let b of g2) {
+                    results.push(a + b);
+                }
+            }
+            return results;
+        }
+
+        function calculateSkinColor() {
+            const gA = document.getElementById('skinParentA').value;
+            const gB = document.getElementById('skinParentB').value;
+
+            const a1_A = getAlleles(gA.slice(0, 2));
+            const a1_B = getAlleles(gA.slice(2));
+            const a2_A = getAlleles(gB.slice(0, 2));
+            const a2_B = getAlleles(gB.slice(2));
+
+            const children_A = crossGenes(a1_A, a2_A);
+            const children_B = crossGenes(a1_B, a2_B);
+
+            let scores = [];
+
+            for (let i = 0; i < children_A.length; i++) {
+                const A_pair = children_A[i];
+                const B_pair = children_B[i];
+                const genotype = A_pair + B_pair;
+                const doms = countDominantAlleles(genotype);
+                scores.push(doms);
+            }
+
+            const avg = (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(2);
+            document.getElementById('skinColorResult').textContent = `Average Dominant Alleles in Offspring: ${avg} / 4`;
+
+            const roundedAvg = Math.round(avg);
+
+            const skinTones = {
+                0: "#fcecd7", // Very Light
+                1: "#e7cba0", // Light
+                2: "#c68642", // Medium
+                3: "#8d5524", // Dark
+                4: "#5b3a29"  // Very Dark
+            };
+
+            document.getElementById('toneBox').style.background = skinTones[roundedAvg] || "#ccc";
+        }
+
+    </script>
+</body>
+
+</html>
